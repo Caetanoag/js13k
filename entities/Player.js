@@ -1,14 +1,25 @@
 import { Vector2 } from "../math/Vector2.js";
 import { Entity } from "./Entity.js";
+import { Projectile } from "./Projectile.js";
 
 export class Player extends Entity {
-  constructor(position, width, height, velocity, renderer, hp, inputManager) {
-    super(position, width, height, velocity, renderer);
+  constructor(
+    position,
+    width,
+    height,
+    velocity,
+    renderer,
+    entities,
+    hp,
+    inputManager,
+  ) {
+    super(position, width, height, velocity, renderer, entities);
     this.hp = hp;
     this.inputManager = inputManager;
-  }
-  collide() {
+    this.projectiles = [];
 
+    this.projectileSpeed = this.width * 1.2;
+    this.lastDirection = this.velocity.clone();
   }
   handleInputs() {
     this.velocity = Vector2.zero();
@@ -24,6 +35,30 @@ export class Player extends Entity {
     if (this.inputManager.isKeyDown("ArrowDown")) {
       this.velocity.y = this.baseVelocity.y;
     }
+    if (this.velocity.length !== 0) this.lastDirection = this.velocity.clone();
+    if (
+      this.inputManager.isKeyPressed("e") ||
+      this.inputManager.isKeyPressed("E")
+    ) {
+      const direction = this.lastDirection.normalized();
+
+      const bulletVelocity = direction.scale(
+        this.projectileSpeed,
+        this.projectileSpeed,
+      );
+      this.projectiles.push(
+        new Projectile(
+          this.center,
+          this.width * 0.4,
+          this.height * 0.4,
+          bulletVelocity,
+          this.renderer,
+          this.entities,
+          10,
+          this,
+        ),
+      );
+    }
   }
   move() {
     super.move();
@@ -31,8 +66,20 @@ export class Player extends Entity {
   draw() {
     this.renderer.fillRectangle(this, "red");
   }
+  updateProjectiles() {
+    for (let i = 0; i < this.projectiles.length; i++) {
+      const p = this.projectiles[i];
+      if (!p.active) {
+        this.projectiles.splice(i, 1);
+        continue;
+      }
+      p.update();
+      p.draw();
+    }
+  }
   update() {
-    this.handleInputs()
+    this.handleInputs();
+    this.updateProjectiles();
     this.move();
     if (!this.isInside(this.renderer.rect)) {
       this.position.subtract(this.velocity);
