@@ -19,20 +19,20 @@ export class Player extends Entity {
     this.projectiles = [];
 
     this.projectileSpeed = this.width * 1.2;
-    this.lastDirection = this.velocity.clone();
   }
-  handleInputs() {
+  handleInputs(worldRect) {
+    const isKeyDown = (key) => this.inputManager.isKeyDown(key);
     this.velocity = Vector2.zero();
-    if (this.inputManager.isKeyDown("ArrowRight")) {
+    if (isKeyDown("ArrowRight") || isKeyDown("D") || isKeyDown("d")) {
       this.velocity.x = this.baseVelocity.x;
     }
-    if (this.inputManager.isKeyDown("ArrowLeft")) {
+    if (isKeyDown("ArrowLeft")  || isKeyDown("A") || isKeyDown("a")) {
       this.velocity.x = -this.baseVelocity.x;
     }
-    if (this.inputManager.isKeyDown("ArrowUp")) {
+    if (isKeyDown("ArrowUp")  || isKeyDown("W") || isKeyDown("w")) {
       this.velocity.y = -this.baseVelocity.y;
     }
-    if (this.inputManager.isKeyDown("ArrowDown")) {
+    if (isKeyDown("ArrowDown")  || isKeyDown("S") || isKeyDown("s")) {
       this.velocity.y = this.baseVelocity.y;
     }
     if (this.velocity.length !== 0) this.lastDirection = this.velocity.clone();
@@ -40,8 +40,13 @@ export class Player extends Entity {
       this.inputManager.isKeyPressed("e") ||
       this.inputManager.isKeyPressed("E")
     ) {
-      const direction = this.lastDirection.normalized();
+      const mouseScreen = this.inputManager.mouse.position;
 
+      const mouseWorld = new Vector2(
+        mouseScreen.x + worldRect.position.x,
+        mouseScreen.y + worldRect.position.y,
+      );
+      const direction = mouseWorld.subtract(this.center).normalized();
       const bulletVelocity = direction.scale(
         this.projectileSpeed,
         this.projectileSpeed,
@@ -79,9 +84,8 @@ export class Player extends Entity {
     }
   }
   update(worldRect) {
-    this.handleInputs();
+    this.handleInputs(worldRect);
     this.updateProjectiles(worldRect);
     this.move();
-
   }
 }
