@@ -4,11 +4,11 @@ import { Player } from "./entities/Player.js";
 import { Vector2 } from "./math/Vector2.js";
 import { InputManager } from "./misc/InputManager.js";
 
-/**@type {CanvasRenderingContext2D} */
-const ctx = document.getElementById("canvas1").getContext("2d");
+const canvas = document.querySelector("canvas")
+const ctx = canvas.getContext("2d");
 const renderer = new Renderer(ctx);
 renderer.setSize(window.innerWidth, window.innerHeight);
-const inputManager = new InputManager();
+const inputManager = new InputManager(canvas);
 
 const entities = [];
 
@@ -30,12 +30,10 @@ entities.push(player1);
 function loop() {
   camera.follow();
   camera.update();
-  const worldRect = camera.worldRect;
-  player1.update(worldRect);
+  player1.update(camera.worldRect);
   renderer.clear();
   camera.apply(renderer);
-
-  drawGrid(renderer, camera.worldRect)
+  drawGrid(renderer, camera.worldRect);
   player1.draw();
   camera.restore(renderer);
   inputManager.update();
