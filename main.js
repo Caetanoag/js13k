@@ -34,6 +34,8 @@ function loop() {
   player1.update(worldRect);
   renderer.clear();
   camera.apply(renderer);
+
+  drawGrid(renderer, camera.worldRect)
   player1.draw();
   camera.restore(renderer);
   inputManager.update();
@@ -41,3 +43,29 @@ function loop() {
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
+
+function drawGrid(renderer, worldRect, tileSize = 1000) {
+  const startCol = Math.floor(worldRect.position.x / tileSize);
+  const startRow = Math.floor(worldRect.position.y / tileSize);
+  const cols = Math.ceil(worldRect.width / tileSize) + 1;
+  const rows = Math.ceil(worldRect.height / tileSize) + 1;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const worldX = (startCol + col) * tileSize;
+      const worldY = (startRow + row) * tileSize;
+
+      const isBlack = (startCol + col + startRow + row) % 2 === 0;
+      const color = isBlack ? "black" : "white";
+
+      renderer.fillRectangle(
+        {
+          position: { x: worldX, y: worldY },
+          width: tileSize,
+          height: tileSize,
+        },
+        color,
+      );
+    }
+  }
+}
