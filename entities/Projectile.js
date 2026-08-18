@@ -9,8 +9,8 @@ export class Projectile extends Entity {
   move() {
     super.move();
   }
-  updateStatus() {
-    if (!this.isInside(this.renderer.rect)) {
+  updateStatus(worldRect) {
+    if (!this.isInside(worldRect)) {
       this.active = false;
       return;
     }
@@ -20,9 +20,9 @@ export class Projectile extends Entity {
     if (!this.active) return;
     this.renderer.fillRectangle(this, "blue");
   }
-  update() {
+  update(worldRect) {
     if (!this.active) return;
     this.move();
-    this.updateStatus();
+    this.updateStatus(worldRect);
   }
 }

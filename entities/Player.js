@@ -65,26 +65,23 @@ export class Player extends Entity {
   }
   draw() {
     this.renderer.fillRectangle(this, "red");
+    for (const p of this.projectiles) p.draw();
   }
-  updateProjectiles() {
+  updateProjectiles(worldRect) {
     for (let i = 0; i < this.projectiles.length; i++) {
       const p = this.projectiles[i];
       if (!p.active) {
         this.projectiles.splice(i, 1);
+        i--;
         continue;
       }
-      p.update();
-      p.draw();
+      p.update(worldRect);
     }
   }
-  update() {
+  update(worldRect) {
     this.handleInputs();
-    this.updateProjectiles();
+    this.updateProjectiles(worldRect);
     this.move();
-    if (!this.isInside(this.renderer.rect)) {
-      this.position.subtract(this.velocity);
-      this.velocity.negate();
-      console.log(this.position);
-    }
+
   }
 }
