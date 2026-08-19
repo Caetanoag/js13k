@@ -1,10 +1,11 @@
 import { Camera } from "./canvas/Camera.js";
 import { Renderer } from "./canvas/Renderer.js";
 import { Player } from "./entities/Player.js";
+import { Spawner } from "./entities/Spawner.js";
 import { Vector2 } from "./math/Vector2.js";
 import { InputManager } from "./misc/InputManager.js";
 
-const canvas = document.querySelector("canvas")
+const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 const renderer = new Renderer(ctx);
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -27,14 +28,19 @@ const player1 = new Player(
 const camera = new Camera(player1, renderer.width, renderer.height);
 entities.push(player1);
 
+const spawner = new Spawner(renderer, entities, player1);
+
 function loop() {
   camera.follow();
   camera.update();
   player1.update(camera.worldRect);
+  spawner.update(camera.worldRect);
+
   renderer.clear();
   camera.apply(renderer);
   drawGrid(renderer, camera.worldRect);
   player1.draw();
+  spawner.draw(camera.worldRect);
   camera.restore(renderer);
   inputManager.update();
 
