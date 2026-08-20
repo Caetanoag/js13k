@@ -43,4 +43,8 @@ export class Rectangle {
       this.bottom <= other.bottom
     );
   }
+  static fromCenter(center, width, height) {
+    const position = new Vector2(center.x - width / 2, center.y - height / 2);
+    return new Rectangle(position, width, height);
+  }
 }
