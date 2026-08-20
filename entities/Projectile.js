@@ -1,6 +1,15 @@
 import { Entity } from "./Entity.js";
 export class Projectile extends Entity {
-  constructor(position, width, height, velocity, renderer, entities, damage, owner) {
+  constructor(
+    position,
+    width,
+    height,
+    velocity,
+    renderer,
+    entities,
+    damage,
+    owner,
+  ) {
     super(position, width, height, velocity, renderer, entities);
     this.damage = damage;
     this.owner = owner;
@@ -14,7 +23,17 @@ export class Projectile extends Entity {
       this.active = false;
       return;
     }
-    this.active = !this.entities.find((e) => e !== this.owner && e.intersects(this));
+    const target = this.entities.find(
+      (e) => e !== this.owner && e.intersects(this),
+    );
+    if (target) {
+      if (target.hp) target.hp.actual -= this.damage;
+      this.active = false;
+    }
+    if (target) {
+      if (target.hp) target.hp.actual -= this.damage;
+      this.active = false;
+    }
   }
   draw() {
     if (!this.active) return;
