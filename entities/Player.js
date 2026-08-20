@@ -69,6 +69,7 @@ export class Player extends Entity {
     super.move();
   }
   draw() {
+    super.draw();
     this.renderer.fillRectangle(this, "red");
     for (const p of this.projectiles) p.draw();
   }

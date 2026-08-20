@@ -27,6 +27,7 @@ export class Enemy extends Entity {
     this.velocity = direction.scale(this.baseVelocity.x, this.baseVelocity.y);
   }
   draw() {
+    super.draw();
     this.renderer.fillRectangle(this, this.color);
   }
   move() {
