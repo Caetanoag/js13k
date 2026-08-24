@@ -64,6 +64,7 @@ export class Spawner {
       if (isDead) {
         const index = this.entities.indexOf(enemy);
         if (index !== -1) this.entities.splice(index, 1);
+        this.target.ammo.actual += 120;
       }
       return !isDead;
     });
