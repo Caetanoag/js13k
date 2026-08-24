@@ -1,6 +1,7 @@
 import { Vector2 } from "../math/Vector2.js";
 import { Entity } from "./Entity.js";
 import { Projectile } from "./Projectile.js";
+import { Rectangle } from "../math/Rectangle.js";
 
 export class Player extends Entity {
   constructor(
@@ -17,6 +18,7 @@ export class Player extends Entity {
     this.hp = hp;
     this.inputManager = inputManager;
     this.projectiles = [];
+    this.ammo = { max: 600, actual: Math.floor(600) };
 
     this.projectileSpeed = this.width * 1.2;
   }
@@ -26,19 +28,20 @@ export class Player extends Entity {
     if (isKeyDown("ArrowRight") || isKeyDown("D") || isKeyDown("d")) {
       this.velocity.x = this.baseVelocity.x;
     }
-    if (isKeyDown("ArrowLeft")  || isKeyDown("A") || isKeyDown("a")) {
+    if (isKeyDown("ArrowLeft") || isKeyDown("A") || isKeyDown("a")) {
       this.velocity.x = -this.baseVelocity.x;
     }
-    if (isKeyDown("ArrowUp")  || isKeyDown("W") || isKeyDown("w")) {
+    if (isKeyDown("ArrowUp") || isKeyDown("W") || isKeyDown("w")) {
       this.velocity.y = -this.baseVelocity.y;
     }
-    if (isKeyDown("ArrowDown")  || isKeyDown("S") || isKeyDown("s")) {
+    if (isKeyDown("ArrowDown") || isKeyDown("S") || isKeyDown("s")) {
       this.velocity.y = this.baseVelocity.y;
     }
     if (this.velocity.length !== 0) this.lastDirection = this.velocity.clone();
     if (
-      this.inputManager.isKeyPressed("e") ||
-      this.inputManager.isKeyPressed("E")
+      (this.inputManager.isKeyPressed("e") ||
+        this.inputManager.isKeyPressed("E")) &&
+      this.ammo.actual > 0
     ) {
       const mouseScreen = this.inputManager.mouse.position;
 
@@ -59,7 +62,7 @@ export class Player extends Entity {
           bulletVelocity,
           this.renderer,
           this.entities,
-          10,
+          1,
           this,
         ),
       );
@@ -72,6 +75,7 @@ export class Player extends Entity {
     super.draw();
     this.renderer.fillRectangle(this, "red");
     for (const p of this.projectiles) p.draw();
+    this.drawAmmo();
   }
   updateProjectiles(worldRect) {
     for (let i = 0; i < this.projectiles.length; i++) {
@@ -84,9 +88,24 @@ export class Player extends Entity {
       p.update(worldRect);
     }
   }
+  drawAmmo() {
+    const barCenter = this.center.add(new Vector2(0, -this.height / 1.5));
+    const bar = Rectangle.fromCenter(
+      barCenter,
+      this.width * 1.3,
+      this.height * 0.2,
+    );
+    this.renderer.fillRectangle(bar, "black");
+    this.renderer.fillRectangle(
+      bar.scale(Math.max(0, this.ammo.actual / this.ammo.max), 1),
+      "blue",
+    );
+  }
   update(worldRect) {
     this.handleInputs(worldRect);
     this.updateProjectiles(worldRect);
     this.move();
+
+    this.ammo.actual = Math.max(0, this.ammo.actual - 1);
   }
 }
