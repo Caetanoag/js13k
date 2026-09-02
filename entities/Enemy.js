@@ -75,3 +75,21 @@ export class FastEnemy extends Enemy {
     );
   }
 }
+
+export class BossEnemy extends Enemy {
+  constructor(position, width, height, renderer, entities) {
+    const velocity = new Vector2(2, 2);
+    const hp = { max: 50, actual: 50 };
+    super(
+      position,
+      80,
+      80,
+      velocity,
+      renderer,
+      entities,
+      hp,
+      4,
+      "red",
+    );
+  }
+}

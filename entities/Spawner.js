@@ -1,6 +1,7 @@
 import { FastEnemy } from "./Enemy.js";
 import { Vector2 } from "../math/Vector2.js";
 import { TankEnemy } from "./Enemy.js";
+import { BossEnemy } from "./Enemy.js";
 
 const enemyTypes = [FastEnemy, TankEnemy];
 
@@ -15,10 +16,8 @@ export class Spawner {
     this.frameCount = 0;
   }
 
-  spawnEnemy(x, y) {
+  spawnEnemy(x, y, enemyClass = enemyTypes[Math.floor(Math.random() * enemyTypes.length)]) {
     const position = new Vector2(x, y);
-    const enemyClass =
-      enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
 
     const enemy = new enemyClass(
       position,
@@ -32,7 +31,7 @@ export class Spawner {
     this.entities.push(enemy);
   }
 
-  spawnAroundPlayer(worldRect) {
+  spawnAroundPlayer(worldRect, enemyClass) {
     const angle = Math.random() * Math.PI * 2;
     const radius = Math.max(worldRect.width, worldRect.height) / 2 + 50;
 
@@ -40,14 +39,20 @@ export class Spawner {
     const x = center.x + Math.cos(angle) * radius;
     const y = center.y + Math.sin(angle) * radius;
 
-    this.spawnEnemy(x, y);
+    this.spawnEnemy(x, y, enemyClass);
   }
 
   update(worldRect) {
     this.frameCount++;
     if (this.frameCount >= this.spawnRate) {
-      this.frameCount = 0;
-      this.spawnAroundPlayer(worldRect);
+    this.frameCount = 0;
+    this.spawnAroundPlayer(worldRect);
+    }
+
+    this.bossFrameCount = (this.bossFrameCount ?? 0) + 1;
+    if (this.bossFrameCount >= 1800) {
+    this.bossFrameCount = 0;
+    this.spawnAroundPlayer(worldRect, BossEnemy);
     }
 
     this.enemies.forEach((enemy) => {
