@@ -74,7 +74,6 @@ export class Player extends Entity {
   draw() {
     this.renderer.fillRectangle(this, "red");
     for (const p of this.projectiles) p.draw();
-    this.drawAmmo();
   }
   updateProjectiles(worldRect) {
     for (let i = 0; i < this.projectiles.length; i++) {
