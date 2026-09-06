@@ -17,7 +17,6 @@ export class Entity extends Rectangle {
     const bar = Rectangle.fromCenter(barCenter, this.width*1.3, this.height * 0.2);
     this.renderer.fillRectangle(bar, "black");
     this.renderer.fillRectangle(bar.scale(Math.max(0, this.hp.actual / this.hp.max), 1), "green");
-
   }
   draw() {
     if (this.hp) this.drawHpBar();

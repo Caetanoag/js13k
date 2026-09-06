@@ -1,4 +1,5 @@
 import { Camera } from "./canvas/Camera.js";
+import { drawHud } from "./canvas/Hud.js";
 import { Renderer } from "./canvas/Renderer.js";
 import { Player } from "./entities/Player.js";
 import { Spawner } from "./entities/Spawner.js";
@@ -42,6 +43,7 @@ function loop() {
   player1.draw();
   spawner.draw(camera.worldRect);
   camera.restore(renderer);
+  drawHud(renderer, player1)
   inputManager.update();
 
   requestAnimationFrame(loop);

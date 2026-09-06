@@ -72,10 +72,8 @@ export class Player extends Entity {
     super.move();
   }
   draw() {
-    super.draw();
     this.renderer.fillRectangle(this, "red");
     for (const p of this.projectiles) p.draw();
-    this.drawAmmo();
   }
   updateProjectiles(worldRect) {
     for (let i = 0; i < this.projectiles.length; i++) {
@@ -87,19 +85,6 @@ export class Player extends Entity {
       }
       p.update(worldRect);
     }
-  }
-  drawAmmo() {
-    const barCenter = this.center.add(new Vector2(0, -this.height / 1.5));
-    const bar = Rectangle.fromCenter(
-      barCenter,
-      this.width * 1.3,
-      this.height * 0.2,
-    );
-    this.renderer.fillRectangle(bar, "black");
-    this.renderer.fillRectangle(
-      bar.scale(Math.max(0, this.ammo.actual / this.ammo.max), 1),
-      "blue",
-    );
   }
   update(worldRect) {
     this.handleInputs(worldRect);
